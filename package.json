@@ -3,7 +3,7 @@
     "displayName": "Markdown Prettier",
     "description": "A beautiful markdown viewer with colored headings and TOC sidebar",
     "publisher": "lyhlg",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "engines": {
         "vscode": "^1.85.0"
     },
@@ -44,7 +44,9 @@
     "scripts": {
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./"
+        "watch": "tsc -watch -p ./",
+        "package": "vsce package --allow-missing-repository",
+        "update-and-publish": "npm run compile && npm run package && VERSION=$(node -p \"require('./package.json').version\") && git add -A && git commit -m \"release: v$VERSION\" && git push origin main && gh release create v$VERSION markdown-prettier-$VERSION.vsix --title \"v$VERSION\" --generate-notes"
     },
     "devDependencies": {
         "@types/vscode": "^1.85.0",
