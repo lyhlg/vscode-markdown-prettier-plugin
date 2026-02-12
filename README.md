@@ -15,7 +15,7 @@
 ### VSIX 로컬 설치
 
 ```bash
-cd ~/Leeyonghyun/vscode-markdown-viewer
+cd ~/vscode-markdown-prettier-plugin
 npm install
 npm run compile
 npx @vscode/vsce package --allow-missing-repository

@@ -95,6 +95,7 @@ interface Heading {
 
 function extractHeadings(markdown: string): Heading[] {
   const headings: Heading[] = [];
+  const idCount: Record<string, number> = {};
   const lines = markdown.split('\n');
 
   for (const line of lines) {
@@ -102,10 +103,19 @@ function extractHeadings(markdown: string): Heading[] {
     if (match) {
       const level = match[1].length;
       const text = match[2].replace(/[#*_`\[\]]/g, '').trim();
-      const id = text
+      let id = text
         .toLowerCase()
         .replace(/[^\w\s\u3131-\uD79D-]/g, '')
         .replace(/\s+/g, '-');
+
+      // Append suffix for duplicate IDs
+      if (idCount[id] !== undefined) {
+        idCount[id]++;
+        id = `${id}-${idCount[id]}`;
+      } else {
+        idCount[id] = 0;
+      }
+
       headings.push({ level, text, id });
     }
   }
