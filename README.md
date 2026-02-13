@@ -1,44 +1,50 @@
 # Markdown Prettier
 
-마크다운을 더 읽기 쉽게 보여주는 VS Code / Cursor 확장입니다.
+A beautiful markdown preview extension for VS Code / Cursor with colored headings, TOC sidebar, and Claude Code integration.
 
-## 기능
+## Features
 
-- **Font Size 12px** — 본문 기본 폰트
-- **색상 헤딩** — H1(파란), H2(초록), H3(노란) 색상 계층 구분
-- **TOC 사이드바** — 좌측 목차 클릭 시 해당 섹션으로 이동
-- **Ask Claude to Improve** — 텍스트 드래그 후 Claude Code에 개선 요청
-- **Frontmatter 자동 제거** — YAML frontmatter는 미리보기에서 숨김 처리
+### Colored Headings
 
-## 설치
+Each heading level has a distinct color for easy visual hierarchy:
 
-### VSIX 로컬 설치
+- **H1** — Blue (`#61AFEF`) with bottom border
+- **H2** — Green (`#98C379`) with bottom border
+- **H3** — Yellow (`#E5C07B`)
+- **H4** — Purple (`#C678DD`)
 
-```bash
-cd ~/vscode-markdown-prettier-plugin
-npm install
-npm run compile
-npx @vscode/vsce package --allow-missing-repository
-```
+### Table of Contents Sidebar
 
-생성된 `.vsix` 파일을 설치:
+- Auto-generated TOC on the left sidebar
+- Click to smooth-scroll to the target section
+- Active section is highlighted as you scroll
+- Supports duplicate heading names
 
-`Cmd + Shift + P` → **"Extensions: Install from VSIX..."** → `markdown-prettier-0.0.1.vsix` 선택
+### Live Preview
 
-## 사용법
+- Preview updates in real-time as you edit
+- Automatically switches when you open a different markdown file
 
-1. `.md` 파일 열기
-2. `Cmd + Shift + M` 또는 에디터 타이틀 바의 **MD 아이콘** 클릭
-3. 우측에 커스텀 마크다운 프리뷰가 열림
+### Ask Claude to Improve
 
-### Claude Code 연동
+- Select any text in the preview
+- A floating toolbar appears with **"Ask Claude to Improve"**
+- Click to send the selected text to Claude Code in the terminal
 
-1. 프리뷰에서 개선하고 싶은 텍스트를 **드래그 선택**
-2. 선택 영역 위에 나타나는 **"Ask Claude to Improve"** 버튼 클릭
-3. 터미널에 Claude Code가 열리면서 자동으로 개선 요청 전송
+### Frontmatter Support
 
-## 단축키
+- YAML frontmatter (`---`) is automatically hidden from the preview
 
-| 단축키 | 동작 |
-|--------|------|
-| `Cmd + Shift + M` | 마크다운 프리뷰 열기 |
+## Usage
+
+1. Open any `.md` file
+2. Press `Cmd + Shift + M` (macOS) / `Ctrl + Shift + M` (Windows/Linux)
+   — or click the **MD icon** in the editor title bar
+3. The preview opens in a side panel
+
+## Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd + Shift + M` | Open Markdown Preview |
+| `Ctrl + Shift + M` | Open Markdown Preview (Windows/Linux) |
