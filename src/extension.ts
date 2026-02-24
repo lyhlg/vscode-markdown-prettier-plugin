@@ -51,9 +51,17 @@ export function activate(context: vscode.ExtensionContext) {
       }
     });
 
+    const scrollDisposable = vscode.window.onDidChangeTextEditorVisibleRanges(e => {
+      if (e.textEditor === editor && e.visibleRanges.length > 0) {
+        const firstLine = e.visibleRanges[0].start.line;
+        panel.webview.postMessage({ type: 'syncScroll', line: firstLine });
+      }
+    });
+
     panel.onDidDispose(() => {
       changeDisposable.dispose();
       switchDisposable.dispose();
+      scrollDisposable.dispose();
     });
   });
 
@@ -91,6 +99,7 @@ interface Heading {
   level: number;
   text: string;
   id: string;
+  line: number;
 }
 
 function extractHeadings(markdown: string): Heading[] {
@@ -98,7 +107,8 @@ function extractHeadings(markdown: string): Heading[] {
   const idCount: Record<string, number> = {};
   const lines = markdown.split('\n');
 
-  for (const line of lines) {
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     const match = line.match(/^(#{1,6})\s+(.+)$/);
     if (match) {
       const level = match[1].length;
@@ -116,7 +126,7 @@ function extractHeadings(markdown: string): Heading[] {
         idCount[id] = 0;
       }
 
-      headings.push({ level, text, id });
+      headings.push({ level, text, id, line: i });
     }
   }
 
@@ -175,6 +185,7 @@ function getWebviewContent(markdown: string): string {
   let renderedHtml = md.render(processed);
   renderedHtml = addHeadingIds(renderedHtml, headings);
   const tocHtml = generateTocHtml(headings);
+  const headingData = JSON.stringify(headings.map(h => ({ id: h.id, line: h.line })));
 
   return /*html*/ `<!DOCTYPE html>
 <html lang="en">
@@ -538,6 +549,28 @@ function getWebviewContent(markdown: string): string {
           text: selectedText
         });
         toolbar.classList.remove('visible');
+      }
+    });
+
+    // Scroll sync
+    const headingData = ${headingData};
+    window.addEventListener('message', (event) => {
+      const message = event.data;
+      if (message.type === 'syncScroll') {
+        const line = message.line;
+        let targetId = null;
+        for (let i = headingData.length - 1; i >= 0; i--) {
+          if (headingData[i].line <= line) {
+            targetId = headingData[i].id;
+            break;
+          }
+        }
+        if (targetId) {
+          const target = document.getElementById(targetId);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
       }
     });
 
