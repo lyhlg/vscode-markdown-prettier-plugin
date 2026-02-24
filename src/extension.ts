@@ -51,11 +51,11 @@ export function activate(context: vscode.ExtensionContext) {
       }
     });
 
-    let scrollTimeout: number | undefined;
+    let scrollTimeout: ReturnType<typeof setTimeout> | undefined;
     const scrollDisposable = vscode.window.onDidChangeTextEditorVisibleRanges(e => {
       if (e.textEditor === editor && e.visibleRanges.length > 0) {
-        if (scrollTimeout !== undefined) { (globalThis as unknown as { clearTimeout: (id: number) => void }).clearTimeout(scrollTimeout); }
-        scrollTimeout = (globalThis as unknown as { setTimeout: (fn: () => void, ms: number) => number }).setTimeout(() => {
+        if (scrollTimeout !== undefined) { clearTimeout(scrollTimeout); }
+        scrollTimeout = setTimeout(() => {
           const firstLine = e.visibleRanges[0].start.line;
           panel.webview.postMessage({ type: 'syncScroll', line: firstLine });
         }, 150);

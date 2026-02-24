@@ -49,8 +49,9 @@
         "update-and-publish": "npm run compile && npm run package && VERSION=$(node -p \"require('./package.json').version\") && git add -A && git commit -m \"release: v$VERSION\" && git push origin main && gh release create v$VERSION markdown-prettier-$VERSION.vsix --title \"v$VERSION\" --generate-notes"
     },
     "devDependencies": {
-        "@types/vscode": "^1.85.0",
         "@types/markdown-it": "^14.1.1",
+        "@types/node": "^25.3.0",
+        "@types/vscode": "^1.85.0",
         "typescript": "^5.3.0"
     },
     "dependencies": {
