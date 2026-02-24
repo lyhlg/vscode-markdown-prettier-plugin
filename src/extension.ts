@@ -165,6 +165,8 @@ function getWebviewContent(markdown: string): string {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <style>
   * {
     margin: 0;
@@ -318,19 +320,23 @@ function getWebviewContent(markdown: string): string {
   }
 
   pre {
-    background: #282c34;
-    border: 1px solid #3e4451;
-    border-radius: 6px;
-    padding: 16px;
     margin: 12px 0;
+    border-radius: 6px;
     overflow-x: auto;
   }
 
-  pre code {
-    background: none;
-    padding: 0;
+  pre code.hljs {
+    border-radius: 6px;
     font-size: 12px;
     line-height: 1.6;
+    padding: 16px;
+  }
+
+  pre code:not(.hljs) {
+    background: #282c34;
+    border: 1px solid #3e4451;
+    padding: 16px;
+    display: block;
   }
 
   /* ── Blockquote ── */
@@ -551,6 +557,10 @@ function getWebviewContent(markdown: string): string {
           link.classList.add('active');
         }
       });
+    });
+    // Syntax highlighting
+    document.querySelectorAll('pre code').forEach(block => {
+      hljs.highlightElement(block);
     });
   </script>
 </body>
