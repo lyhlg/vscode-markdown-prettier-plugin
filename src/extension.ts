@@ -16,7 +16,7 @@ export function activate(context: vscode.ExtensionContext) {
     const panel = vscode.window.createWebviewPanel(
       'markdownViewer',
       `Preview: ${getFileName(editor.document.uri)}`,
-      vscode.ViewColumn.Beside,
+      vscode.ViewColumn.Active,
       { enableScripts: true, retainContextWhenHidden: true }
     );
 
