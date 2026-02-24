@@ -51,12 +51,11 @@ export function activate(context: vscode.ExtensionContext) {
       }
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let scrollTimeout: any;
+    let scrollTimeout: number | undefined;
     const scrollDisposable = vscode.window.onDidChangeTextEditorVisibleRanges(e => {
       if (e.textEditor === editor && e.visibleRanges.length > 0) {
-        if (scrollTimeout) { (globalThis as any).clearTimeout(scrollTimeout); }
-        scrollTimeout = (globalThis as any).setTimeout(() => {
+        if (scrollTimeout !== undefined) { (globalThis as unknown as { clearTimeout: (id: number) => void }).clearTimeout(scrollTimeout); }
+        scrollTimeout = (globalThis as unknown as { setTimeout: (fn: () => void, ms: number) => number }).setTimeout(() => {
           const firstLine = e.visibleRanges[0].start.line;
           panel.webview.postMessage({ type: 'syncScroll', line: firstLine });
         }, 150);
