@@ -231,22 +231,68 @@ function getWebviewContent(markdown: string): string {
     min-width: 240px;
     height: 100vh;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 16px 12px;
     border-right: 1px solid var(--vscode-panel-border, #333);
     background: var(--vscode-sideBar-background, #181818);
     position: sticky;
     top: 0;
+    flex-shrink: 0;
+    transition: width 0.2s ease, min-width 0.2s ease, padding 0.2s ease;
   }
 
-  .toc-title {
+  .toc.collapsed {
+    width: 36px;
+    min-width: 36px;
+    padding: 12px 6px;
+    overflow: hidden;
+  }
+
+  .toc.collapsed .toc-title-text,
+  .toc.collapsed .toc-items {
+    display: none;
+  }
+
+  .toc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--vscode-panel-border, #333);
+  }
+
+  .toc.collapsed .toc-header {
+    justify-content: center;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .toc-title-text {
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     color: var(--vscode-sideBarSectionHeader-foreground, #999);
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--vscode-panel-border, #333);
+    white-space: nowrap;
+  }
+
+  .toc-toggle {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 10px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .toc-toggle:hover {
+    color: #fff;
+    background: var(--vscode-list-hoverBackground, #2a2d2e);
   }
 
   .toc-item {
@@ -351,7 +397,8 @@ function getWebviewContent(markdown: string): string {
   /* ── Code ── */
   code {
     font-family: 'Fira Code', 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
-    background: #2c313a;
+    background: #383e4a;
+    border: 1px solid #4b5263;
     padding: 2px 6px;
     border-radius: 3px;
     font-size: 11.5px;
@@ -361,6 +408,7 @@ function getWebviewContent(markdown: string): string {
     margin: 12px 0;
     border-radius: 6px;
     overflow-x: auto;
+    border: 1px solid #4b5263;
   }
 
   pre code.hljs {
@@ -536,9 +584,14 @@ function getWebviewContent(markdown: string): string {
     <button class="font-btn" id="fontPlus">A+</button>
   </div>
   <div class="container">
-    <nav class="toc">
-      <div class="toc-title">Table of Contents</div>
-      ${tocHtml}
+    <nav class="toc" id="toc">
+      <div class="toc-header">
+        <span class="toc-title-text">Table of Contents</span>
+        <button class="toc-toggle" id="tocToggle" title="TOC 접기">◀</button>
+      </div>
+      <div class="toc-items">
+        ${tocHtml}
+      </div>
     </nav>
     <main class="content">
       ${renderedHtml}
@@ -557,6 +610,17 @@ function getWebviewContent(markdown: string): string {
 
   <script>
     const vscode = acquireVsCodeApi();
+
+    // TOC toggle
+    const toc = document.getElementById('toc');
+    const tocToggle = document.getElementById('tocToggle');
+    tocToggle.addEventListener('click', () => {
+      toc.classList.toggle('collapsed');
+      const isCollapsed = toc.classList.contains('collapsed');
+      tocToggle.textContent = isCollapsed ? '▶' : '◀';
+      tocToggle.title = isCollapsed ? 'TOC 열기' : 'TOC 접기';
+    });
+
     // Font size control
     const savedState = vscode.getState() || { fontSize: 12 };
     let fontSize = savedState.fontSize;
