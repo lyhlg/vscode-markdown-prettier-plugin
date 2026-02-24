@@ -154,7 +154,18 @@ function stripFrontmatter(markdown: string): string {
 }
 
 function preprocessMermaid(markdown: string): string {
-  return markdown.replace(/```mermaid\r?\n([\s\S]*?)```/g, '<div class="mermaid">$1</div>');
+  return markdown.replace(
+    /```mermaid\r?\n([\s\S]*?)```/g,
+    (_, content) => {
+      const escaped = content
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+      return `<div class="mermaid">${escaped}</div>`;
+    }
+  );
 }
 
 function getWebviewContent(markdown: string): string {
@@ -172,7 +183,7 @@ function getWebviewContent(markdown: string): string {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
 <script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
 <style>
   * {
