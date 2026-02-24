@@ -167,27 +167,32 @@ function stripFrontmatter(markdown: string): string {
   return markdown;
 }
 
-function preprocessMermaid(markdown: string): string {
-  return markdown.replace(
+function preprocessMermaid(markdown: string): { processed: string; blocks: string[] } {
+  const blocks: string[] = [];
+  const processed = markdown.replace(
     /```mermaid\r?\n([\s\S]*?)```/g,
     (_, content) => {
-      const escaped = content
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-      return `<div class="mermaid">${escaped}</div>`;
+      const idx = blocks.length;
+      blocks.push(content);
+      return `\n\nMERMAID_PLACEHOLDER_${idx}\n\n`;
     }
   );
+  return { processed, blocks };
 }
 
 function getWebviewContent(markdown: string): string {
   const stripped = stripFrontmatter(markdown);
-  const processed = preprocessMermaid(stripped);
+  const { processed, blocks } = preprocessMermaid(stripped);
   const headings = extractHeadings(stripped);
   let renderedHtml = md.render(processed);
   renderedHtml = addHeadingIds(renderedHtml, headings);
+  // Replace placeholders with mermaid divs after markdown-it rendering
+  blocks.forEach((content, idx) => {
+    renderedHtml = renderedHtml.replace(
+      new RegExp(`<p>MERMAID_PLACEHOLDER_${idx}</p>`),
+      `<div class="mermaid">${content}</div>`
+    );
+  });
   const tocHtml = generateTocHtml(headings);
   const headingData = JSON.stringify(headings.map(h => ({ id: h.id, line: h.line })));
 

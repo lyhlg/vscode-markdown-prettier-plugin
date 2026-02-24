@@ -3,7 +3,7 @@
     "displayName": "Markdown Prettier",
     "description": "A beautiful markdown viewer with colored headings and TOC sidebar",
     "publisher": "lyhlg",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "engines": {
         "vscode": "^1.85.0"
     },
@@ -46,7 +46,7 @@
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
         "package": "vsce package --allow-missing-repository",
-        "update-and-publish": "npm run compile && npm run package && VERSION=$(node -p \"require('./package.json').version\") && git add -A && git commit -m \"release: v$VERSION\" && git push origin main && gh release create v$VERSION markdown-prettier-$VERSION.vsix --title \"v$VERSION\" --generate-notes"
+        "update-and-publish": "npm version patch --no-git-tag-version && npm run compile && npm run package && VERSION=$(node -p \"require('./package.json').version\") && git add -A && git commit -m \"release: v$VERSION\" && git push origin main && gh release create v$VERSION markdown-prettier-$VERSION.vsix --title \"v$VERSION\" --generate-notes"
     },
     "devDependencies": {
         "@types/markdown-it": "^14.1.1",
