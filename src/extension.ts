@@ -51,10 +51,15 @@ export function activate(context: vscode.ExtensionContext) {
       }
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let scrollTimeout: any;
     const scrollDisposable = vscode.window.onDidChangeTextEditorVisibleRanges(e => {
       if (e.textEditor === editor && e.visibleRanges.length > 0) {
-        const firstLine = e.visibleRanges[0].start.line;
-        panel.webview.postMessage({ type: 'syncScroll', line: firstLine });
+        if (scrollTimeout) { (globalThis as any).clearTimeout(scrollTimeout); }
+        scrollTimeout = (globalThis as any).setTimeout(() => {
+          const firstLine = e.visibleRanges[0].start.line;
+          panel.webview.postMessage({ type: 'syncScroll', line: firstLine });
+        }, 150);
       }
     });
 
@@ -496,6 +501,8 @@ function getWebviewContent(markdown: string): string {
     </main>
   </div>
 
+  <script id="heading-data" type="application/json">${headingData}</script>
+
   <!-- Floating Toolbar (appears on text selection) -->
   <div class="floating-toolbar" id="toolbar">
     <button id="askClaudeBtn">
@@ -553,7 +560,7 @@ function getWebviewContent(markdown: string): string {
     });
 
     // Scroll sync
-    const headingData = ${headingData};
+    const headingData = JSON.parse(document.getElementById('heading-data').textContent);
     window.addEventListener('message', (event) => {
       const message = event.data;
       if (message.type === 'syncScroll') {
