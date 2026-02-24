@@ -487,9 +487,49 @@ function getWebviewContent(markdown: string): string {
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
   ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+  /* ── Font Controls ── */
+  .font-controls {
+    position: fixed;
+    top: 12px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 100;
+    background: var(--vscode-editor-background, #21252b);
+    border: 1px solid var(--vscode-panel-border, #3e4451);
+    border-radius: 6px;
+    padding: 4px 8px;
+  }
+
+  .font-btn {
+    background: none;
+    border: none;
+    color: var(--vscode-editor-foreground, #abb2bf);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 0 2px;
+    line-height: 1;
+  }
+
+  .font-btn:hover { color: #fff; }
+
+  .font-size-label {
+    font-size: 11px;
+    color: #666;
+    min-width: 30px;
+    text-align: center;
+  }
 </style>
 </head>
 <body>
+  <div class="font-controls">
+    <button class="font-btn" id="fontMinus">A−</button>
+    <span class="font-size-label" id="fontSizeLabel">12px</span>
+    <button class="font-btn" id="fontPlus">A+</button>
+  </div>
   <div class="container">
     <nav class="toc">
       <div class="toc-title">Table of Contents</div>
@@ -512,6 +552,25 @@ function getWebviewContent(markdown: string): string {
 
   <script>
     const vscode = acquireVsCodeApi();
+    // Font size control
+    const savedState = vscode.getState() || { fontSize: 12 };
+    let fontSize = savedState.fontSize;
+    document.body.style.fontSize = fontSize + 'px';
+    document.getElementById('fontSizeLabel').textContent = fontSize + 'px';
+
+    document.getElementById('fontMinus').addEventListener('click', () => {
+      fontSize = Math.max(10, fontSize - 1);
+      document.body.style.fontSize = fontSize + 'px';
+      document.getElementById('fontSizeLabel').textContent = fontSize + 'px';
+      vscode.setState({ fontSize });
+    });
+
+    document.getElementById('fontPlus').addEventListener('click', () => {
+      fontSize = Math.min(20, fontSize + 1);
+      document.body.style.fontSize = fontSize + 'px';
+      document.getElementById('fontSizeLabel').textContent = fontSize + 'px';
+      vscode.setState({ fontSize });
+    });
     const toolbar = document.getElementById('toolbar');
     const askClaudeBtn = document.getElementById('askClaudeBtn');
 
