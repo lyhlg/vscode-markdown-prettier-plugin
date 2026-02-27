@@ -3,6 +3,7 @@
     "displayName": "Markdown Prettier",
     "description": "A beautiful markdown viewer with colored headings and TOC sidebar",
     "publisher": "lyhlg",
+    "icon": "icon.png",
     "version": "1.0.0",
     "engines": {
         "vscode": "^1.85.0"
