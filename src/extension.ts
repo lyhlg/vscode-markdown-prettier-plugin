@@ -204,7 +204,10 @@ function getWebviewContent(markdown: string): string {
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
-<script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
+<script>
+  const mermaidTheme = document.body.classList.contains('vscode-light') ? 'default' : 'dark';
+  mermaid.initialize({ startOnLoad: true, theme: mermaidTheme });
+</script>
 <style>
   * {
     margin: 0;
@@ -338,7 +341,7 @@ function getWebviewContent(markdown: string): string {
 
   /* ── Headings ── */
   h1 {
-    font-size: 28px;
+    font-size: 2.33em;
     font-weight: 700;
     color: #61AFEF;
     margin: 32px 0 16px 0;
@@ -347,7 +350,7 @@ function getWebviewContent(markdown: string): string {
   }
 
   h2 {
-    font-size: 22px;
+    font-size: 1.83em;
     font-weight: 600;
     color: #98C379;
     margin: 28px 0 12px 0;
@@ -356,21 +359,21 @@ function getWebviewContent(markdown: string): string {
   }
 
   h3 {
-    font-size: 18px;
+    font-size: 1.5em;
     font-weight: 600;
     color: #E5C07B;
     margin: 24px 0 10px 0;
   }
 
   h4 {
-    font-size: 15px;
+    font-size: 1.25em;
     font-weight: 600;
     color: #C678DD;
     margin: 20px 0 8px 0;
   }
 
   h5, h6 {
-    font-size: 13px;
+    font-size: 1.08em;
     font-weight: 600;
     color: #ABB2BF;
     margin: 16px 0 8px 0;
@@ -541,6 +544,87 @@ function getWebviewContent(markdown: string): string {
   ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
   ::-webkit-scrollbar-thumb:hover { background: #555; }
 
+  /* ── Light Mode Overrides ── */
+  body.vscode-light h1 { color: #1a1a1a; border-bottom-color: #1a1a1a22; }
+  body.vscode-light h2 { color: #2c3e50; border-bottom-color: #2c3e5022; }
+  body.vscode-light h3 { color: #3a536b; }
+  body.vscode-light h4 { color: #555; }
+  body.vscode-light h5, body.vscode-light h6 { color: #666; }
+
+  body.vscode-light .toc-h1 { color: #1a1a1a; }
+  body.vscode-light .toc-h2 { color: #2c3e50; }
+  body.vscode-light .toc-h3 { color: #3a536b; }
+
+  body.vscode-light code {
+    background: #f0f2f5;
+    border-color: #d0d7de;
+    color: #24292f;
+  }
+
+  body.vscode-light pre { border-color: #d0d7de; }
+
+  body.vscode-light pre code:not(.hljs) {
+    background: #f6f8fa;
+    border-color: #d0d7de;
+    color: #24292f;
+  }
+
+  body.vscode-light th, body.vscode-light td {
+    border-color: #d0d7de;
+    color: #24292f;
+  }
+
+  body.vscode-light th {
+    background: #f0f2f5;
+    color: #1a1a1a;
+  }
+
+  body.vscode-light tr:nth-child(even) {
+    background: #f6f8fa;
+  }
+
+  body.vscode-light blockquote {
+    color: #555;
+    border-left-color: #2c3e50;
+    background: #f6f8fa;
+  }
+
+  body.vscode-light hr { border-top-color: #d0d7de; }
+
+  body.vscode-light a { color: #0969da; }
+  body.vscode-light .toc-item { color: #333; }
+
+  body.vscode-light .toc-toggle { color: #888; }
+  body.vscode-light .toc-toggle:hover { color: #333; background: #e8e8e8; }
+
+  body.vscode-light .floating-toolbar { background: #fff; border-color: #d0d7de; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+  body.vscode-light .floating-toolbar button { background: #0969da22; color: #0969da; }
+  body.vscode-light .floating-toolbar button:hover { background: #0969da44; }
+
+  body.vscode-light ::-webkit-scrollbar-thumb { background: #ccc; }
+  body.vscode-light ::-webkit-scrollbar-thumb:hover { background: #aaa; }
+
+  body.vscode-light .slide-nav { background: #fff; border-color: #d0d7de; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+  body.vscode-light .font-btn:hover { color: #333; }
+
+  /* highlight.js light mode overrides */
+  body.vscode-light .hljs { background: #f6f8fa !important; color: #24292f; }
+  body.vscode-light .hljs-comment, body.vscode-light .hljs-quote { color: #6a737d; }
+  body.vscode-light .hljs-keyword, body.vscode-light .hljs-selector-tag { color: #cf222e; }
+  body.vscode-light .hljs-string, body.vscode-light .hljs-addition { color: #116329; }
+  body.vscode-light .hljs-number, body.vscode-light .hljs-literal { color: #0550ae; }
+  body.vscode-light .hljs-title, body.vscode-light .hljs-section { color: #0550ae; font-weight: bold; }
+  body.vscode-light .hljs-title.function_ { color: #8250df; }
+  body.vscode-light .hljs-variable, body.vscode-light .hljs-tag { color: #116329; }
+  body.vscode-light .hljs-attr, body.vscode-light .hljs-attribute { color: #0550ae; }
+  body.vscode-light .hljs-built_in, body.vscode-light .hljs-type { color: #953800; }
+  body.vscode-light .hljs-params { color: #24292f; }
+  body.vscode-light .hljs-symbol, body.vscode-light .hljs-bullet { color: #0550ae; }
+  body.vscode-light .hljs-meta { color: #0550ae; }
+  body.vscode-light .hljs-deletion { color: #82071e; background: #ffebe9; }
+  body.vscode-light .hljs-name { color: #116329; }
+  body.vscode-light .hljs-subst { color: #24292f; }
+
   /* ── Font Controls ── */
   .font-controls {
     position: fixed;
@@ -575,6 +659,117 @@ function getWebviewContent(markdown: string): string {
     min-width: 30px;
     text-align: center;
   }
+
+  .font-controls-divider {
+    width: 1px;
+    height: 16px;
+    background: var(--vscode-panel-border, #3e4451);
+    margin: 0 2px;
+  }
+
+  /* ── Presentation Mode ── */
+  body.presentation-mode .container {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  body.presentation-mode .toc,
+  body.presentation-mode .font-controls {
+    display: none;
+  }
+
+  body.presentation-mode .content {
+    overflow: hidden;
+    padding: 0;
+    position: relative;
+    width: 100%;
+    height: 100vh;
+  }
+
+  .slide { /* no special styling in normal mode */ }
+
+  body.presentation-mode .slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 64px 80px;
+    box-sizing: border-box;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.4s ease;
+    pointer-events: none;
+    overflow-y: auto;
+  }
+
+  body.presentation-mode .slide > * {
+    max-width: 900px;
+    width: 100%;
+  }
+
+  body.presentation-mode .slide.slide-active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  body.presentation-mode .slide.slide-prev {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+
+  .slide-nav {
+    display: none;
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--vscode-editor-background, #21252b);
+    border: 1px solid var(--vscode-panel-border, #3e4451);
+    border-radius: 8px;
+    padding: 6px 16px;
+    gap: 12px;
+    align-items: center;
+    z-index: 10000;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+
+  body.presentation-mode .slide-nav { display: flex; }
+
+  .slide-nav-btn {
+    background: none;
+    border: none;
+    color: var(--vscode-editor-foreground, #abb2bf);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+
+  .slide-nav-btn:hover {
+    background: var(--vscode-list-hoverBackground, #2a2d2e);
+  }
+
+  .slide-exit-btn {
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 8px;
+    padding: 4px 10px;
+    border: 1px solid var(--vscode-panel-border, #3e4451);
+  }
+
+  .slide-counter {
+    font-size: 13px;
+    color: var(--vscode-editor-foreground, #abb2bf);
+    min-width: 60px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
 </style>
 </head>
 <body>
@@ -582,6 +777,8 @@ function getWebviewContent(markdown: string): string {
     <button class="font-btn" id="fontMinus">A−</button>
     <span class="font-size-label" id="fontSizeLabel">12px</span>
     <button class="font-btn" id="fontPlus">A+</button>
+    <span class="font-controls-divider"></span>
+    <button class="font-btn" id="presentBtn" title="Presentation Mode">▶</button>
   </div>
   <div class="container">
     <nav class="toc" id="toc">
@@ -600,6 +797,14 @@ function getWebviewContent(markdown: string): string {
 
   <script id="heading-data" type="application/json">${headingData}</script>
 
+  <!-- Slide Navigation (visible in presentation mode) -->
+  <div class="slide-nav" id="slideNav">
+    <button class="slide-nav-btn" id="slidePrev">&#8592;</button>
+    <span class="slide-counter" id="slideCounter">1 / 1</span>
+    <button class="slide-nav-btn" id="slideNext">&#8594;</button>
+    <button class="slide-nav-btn slide-exit-btn" id="slideExit">ESC</button>
+  </div>
+
   <!-- Floating Toolbar (appears on text selection) -->
   <div class="floating-toolbar" id="toolbar">
     <button id="askClaudeBtn">
@@ -611,7 +816,7 @@ function getWebviewContent(markdown: string): string {
   <script>
     const vscode = acquireVsCodeApi();
 
-    // TOC toggle
+    // ── TOC toggle ──
     const toc = document.getElementById('toc');
     const tocToggle = document.getElementById('tocToggle');
     tocToggle.addEventListener('click', () => {
@@ -621,7 +826,7 @@ function getWebviewContent(markdown: string): string {
       tocToggle.title = isCollapsed ? 'TOC 열기' : 'TOC 접기';
     });
 
-    // Font size control
+    // ── Font size control ──
     const savedState = vscode.getState() || { fontSize: 12 };
     let fontSize = savedState.fontSize;
     document.body.style.fontSize = fontSize + 'px';
@@ -640,10 +845,11 @@ function getWebviewContent(markdown: string): string {
       document.getElementById('fontSizeLabel').textContent = fontSize + 'px';
       vscode.setState({ fontSize });
     });
+
+    // ── Floating toolbar ──
     const toolbar = document.getElementById('toolbar');
     const askClaudeBtn = document.getElementById('askClaudeBtn');
 
-    // Show floating toolbar on text selection
     document.addEventListener('mouseup', (e) => {
       const selection = window.getSelection();
       const selectedText = selection?.toString().trim();
@@ -656,7 +862,6 @@ function getWebviewContent(markdown: string): string {
         toolbar.style.left = rect.left + (rect.width / 2) - (toolbar.offsetWidth / 2) + 'px';
         toolbar.style.top = (rect.top - toolbar.offsetHeight - 8) + 'px';
 
-        // Adjust if toolbar goes off-screen
         const toolbarRect = toolbar.getBoundingClientRect();
         if (toolbarRect.left < 8) toolbar.style.left = '8px';
         if (toolbarRect.top < 8) toolbar.style.top = (rect.bottom + 8) + 'px';
@@ -665,32 +870,36 @@ function getWebviewContent(markdown: string): string {
       }
     });
 
-    // Hide toolbar on click outside
     document.addEventListener('mousedown', (e) => {
       if (!toolbar.contains(e.target)) {
         toolbar.classList.remove('visible');
       }
     });
 
-    // "Ask Claude" button click
     askClaudeBtn.addEventListener('click', () => {
       const selection = window.getSelection();
       const selectedText = selection?.toString().trim();
-
       if (selectedText) {
-        vscode.postMessage({
-          type: 'askClaude',
-          text: selectedText
-        });
+        vscode.postMessage({ type: 'askClaude', text: selectedText });
         toolbar.classList.remove('visible');
       }
     });
 
-    // Scroll sync
+    // ── Active tracking ──
+    function setActiveTocItem(id) {
+      document.querySelectorAll('.toc-item').forEach(l => l.classList.remove('active'));
+      const link = document.querySelector('.toc-item[href="#' + id + '"]');
+      if (link) link.classList.add('active');
+    }
+
+    // ── Scroll sync ──
     const headingData = JSON.parse(document.getElementById('heading-data').textContent);
+    let presentationActive = false;
+
     window.addEventListener('message', (event) => {
       const message = event.data;
       if (message.type === 'syncScroll') {
+        if (presentationActive) return;
         const line = message.line;
         let targetId = null;
         for (let i = headingData.length - 1; i >= 0; i--) {
@@ -708,7 +917,7 @@ function getWebviewContent(markdown: string): string {
       }
     });
 
-    // TOC click → smooth scroll
+    // ── TOC click ──
     document.querySelectorAll('.toc-item').forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
@@ -717,36 +926,124 @@ function getWebviewContent(markdown: string): string {
         if (target) {
           target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-        document.querySelectorAll('.toc-item').forEach(l => l.classList.remove('active'));
-        link.classList.add('active');
+        setActiveTocItem(id);
       });
     });
 
-    // Highlight current section on scroll
+    // ── Scroll-based active section ──
     const content = document.querySelector('.content');
-    const headings = document.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]');
-    const tocLinks = document.querySelectorAll('.toc-item');
+    const headingEls = document.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]');
 
     content.addEventListener('scroll', () => {
       let current = '';
-      headings.forEach(heading => {
+      headingEls.forEach(heading => {
         const rect = heading.getBoundingClientRect();
         if (rect.top <= 80) {
           current = heading.id;
         }
       });
-
-      tocLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === '#' + current) {
-          link.classList.add('active');
-        }
-      });
+      setActiveTocItem(current);
     });
-    // Syntax highlighting
+
+    // ── Syntax highlighting ──
     document.querySelectorAll('pre code').forEach(block => {
       hljs.highlightElement(block);
     });
+
+    // ══════════════════════════════════════════
+    // ── PRESENTATION MODE ──
+    // ══════════════════════════════════════════
+    function buildSlides() {
+      const contentEl = document.querySelector('.content');
+      const children = Array.from(contentEl.childNodes);
+      const groups = [];
+      let cur = [];
+
+      children.forEach(node => {
+        if (node.nodeName === 'HR') {
+          groups.push(cur);
+          cur = [];
+          node.classList.add('slide-divider');
+        } else {
+          cur.push(node);
+        }
+      });
+      if (cur.length > 0) groups.push(cur);
+
+      groups.forEach((group, i) => {
+        const div = document.createElement('div');
+        div.className = 'slide';
+        div.dataset.slideIndex = i;
+        if (group.length > 0) {
+          contentEl.insertBefore(div, group[0]);
+          group.forEach(n => div.appendChild(n));
+        }
+      });
+
+      contentEl.querySelectorAll('.slide-divider').forEach(hr => hr.remove());
+      return groups.length;
+    }
+
+    const totalSlides = buildSlides();
+    let currentSlide = 0;
+    const allSlides = document.querySelectorAll('.slide');
+    const slideCounter = document.getElementById('slideCounter');
+    const presentBtn = document.getElementById('presentBtn');
+
+    function updateSlideClasses() {
+      allSlides.forEach((s, i) => {
+        s.classList.remove('slide-active', 'slide-prev');
+        if (i === currentSlide) s.classList.add('slide-active');
+        else if (i < currentSlide) s.classList.add('slide-prev');
+      });
+      slideCounter.textContent = (currentSlide + 1) + ' / ' + totalSlides;
+    }
+
+    function enterPresentation() {
+      if (totalSlides <= 1) return;
+      presentationActive = true;
+      currentSlide = 0;
+      document.body.classList.add('presentation-mode');
+      updateSlideClasses();
+      try { mermaid.init(undefined, '.slide-active .mermaid'); } catch(e) {}
+    }
+
+    function exitPresentation() {
+      presentationActive = false;
+      document.body.classList.remove('presentation-mode');
+      allSlides.forEach(s => s.classList.remove('slide-active', 'slide-prev'));
+    }
+
+    function goToSlide(index) {
+      if (index < 0 || index >= totalSlides) return;
+      currentSlide = index;
+      updateSlideClasses();
+      try { mermaid.init(undefined, '.slide-active .mermaid'); } catch(e) {}
+    }
+
+    presentBtn.addEventListener('click', () => {
+      presentationActive ? exitPresentation() : enterPresentation();
+    });
+
+    document.getElementById('slidePrev').addEventListener('click', () => goToSlide(currentSlide - 1));
+    document.getElementById('slideNext').addEventListener('click', () => goToSlide(currentSlide + 1));
+    document.getElementById('slideExit').addEventListener('click', exitPresentation);
+
+    document.addEventListener('keydown', (e) => {
+      if (!presentationActive) return;
+      switch(e.key) {
+        case 'ArrowRight': case 'ArrowDown': case ' ':
+          e.preventDefault(); goToSlide(currentSlide + 1); break;
+        case 'ArrowLeft': case 'ArrowUp':
+          e.preventDefault(); goToSlide(currentSlide - 1); break;
+        case 'Escape': exitPresentation(); break;
+        case 'Home': e.preventDefault(); goToSlide(0); break;
+        case 'End': e.preventDefault(); goToSlide(totalSlides - 1); break;
+      }
+    });
+
+    // Hide present button if no slides
+    if (totalSlides <= 1) presentBtn.style.opacity = '0.3';
   </script>
 </body>
 </html>`;
