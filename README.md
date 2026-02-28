@@ -21,6 +21,8 @@ Each heading level has a distinct color for easy visual hierarchy:
 - Active section is highlighted as you scroll
 - Collapsible sidebar with toggle button
 - Supports duplicate heading names
+- Dotted indent guide lines for clear depth hierarchy
+- Drag-resizable sidebar width (120px–500px)
 
 ### Presentation Mode
 
