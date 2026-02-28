@@ -213,8 +213,12 @@ function generateTocHtml(headings: Heading[]): string {
 
   return headings
     .map(h => {
-      const indent = (h.level - 1) * 16;
-      return `<a class="toc-item toc-h${h.level}" href="#${h.id}" style="padding-left: ${indent}px">${h.text}</a>`;
+      const depth = h.level - 1;
+      const indent = 12 + depth * 10;
+      const guides = Array.from({ length: depth }, (_, i) =>
+        `<span class="toc-guide" style="left: ${12 + i * 10}px"></span>`
+      ).join('');
+      return `<a class="toc-item toc-h${h.level}" href="#${h.id}" style="padding-left: ${indent}px">${guides}${h.text}</a>`;
     })
     .join('\n');
 }
@@ -302,12 +306,12 @@ function getWebviewContent(markdown: string): string {
   /* ── TOC Sidebar ── */
   .toc {
     width: 240px;
-    min-width: 240px;
+    min-width: 120px;
     height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
     padding: 16px 12px;
-    border-right: 1px solid var(--vscode-panel-border, #333);
+    border-right: none;
     background: var(--vscode-sideBar-background, #181818);
     position: sticky;
     top: 0;
@@ -322,9 +326,26 @@ function getWebviewContent(markdown: string): string {
     overflow: hidden;
   }
 
+  .toc.collapsed + .toc-resize-handle {
+    display: none;
+  }
+
   .toc.collapsed .toc-title-text,
   .toc.collapsed .toc-items {
     display: none;
+  }
+
+  .toc-resize-handle {
+    width: 4px;
+    cursor: col-resize;
+    background: var(--vscode-panel-border, #333);
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+
+  .toc-resize-handle:hover,
+  .toc-resize-handle.dragging {
+    background: var(--vscode-focusBorder, #007fd4);
   }
 
   .toc-header {
@@ -371,7 +392,8 @@ function getWebviewContent(markdown: string): string {
 
   .toc-item {
     display: block;
-    padding: 4px 8px;
+    position: relative;
+    padding: 4px 12px;
     margin: 1px 0;
     border-radius: 4px;
     text-decoration: none;
@@ -381,6 +403,15 @@ function getWebviewContent(markdown: string): string {
     overflow: hidden;
     text-overflow: ellipsis;
     transition: background 0.15s;
+  }
+
+  .toc-guide {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    border-left: 1px dotted rgba(255,255,255,0.25);
+    pointer-events: none;
   }
 
   .toc-item:hover {
@@ -665,6 +696,7 @@ function getWebviewContent(markdown: string): string {
   body.vscode-light a { color: #0969da; }
   body.vscode-light .toc-item { color: #333; }
 
+  body.vscode-light .toc-guide { border-left-color: rgba(0,0,0,0.15); }
   body.vscode-light .toc-toggle { color: #888; }
   body.vscode-light .toc-toggle:hover { color: #333; background: #e8e8e8; }
 
@@ -1010,6 +1042,7 @@ function getWebviewContent(markdown: string): string {
         ${tocHtml}
       </div>
     </nav>
+    <div class="toc-resize-handle" id="tocResizeHandle"></div>
     <main class="content">
       ${renderedHtml}
     </main>
@@ -1052,6 +1085,32 @@ function getWebviewContent(markdown: string): string {
       const isCollapsed = toc.classList.contains('collapsed');
       tocToggle.textContent = isCollapsed ? '▶' : '◀';
       tocToggle.title = isCollapsed ? 'TOC 열기' : 'TOC 접기';
+    });
+
+    // ── TOC resize drag ──
+    const resizeHandle = document.getElementById('tocResizeHandle');
+    let isResizing = false;
+    resizeHandle.addEventListener('mousedown', (e) => {
+      if (toc.classList.contains('collapsed')) return;
+      isResizing = true;
+      resizeHandle.classList.add('dragging');
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', (e) => {
+      if (!isResizing) return;
+      const newWidth = Math.max(120, Math.min(e.clientX, 500));
+      toc.style.width = newWidth + 'px';
+      toc.style.transition = 'none';
+    });
+    document.addEventListener('mouseup', () => {
+      if (!isResizing) return;
+      isResizing = false;
+      resizeHandle.classList.remove('dragging');
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      toc.style.transition = '';
     });
 
     // ── Font size control ──
