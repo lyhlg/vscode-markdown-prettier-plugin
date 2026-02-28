@@ -222,7 +222,8 @@ function generateTocHtml(headings: Heading[]): string {
 function addHeadingIds(html: string, headings: Heading[]): string {
   let result = html;
   for (const h of headings) {
-    const tagRegex = new RegExp(`<h${h.level}([ >])`, '');
+    // Match only <hN> tags that do NOT already have an id attribute
+    const tagRegex = new RegExp(`<h${h.level}(?![^>]*\\bid=)([ >])`, '');
     result = result.replace(tagRegex, `<h${h.level} id="${h.id}"$1`);
   }
   return result;
