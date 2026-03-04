@@ -179,9 +179,15 @@ function extractHeadings(markdown: string): Heading[] {
   const headings: Heading[] = [];
   const idCount: Record<string, number> = {};
   const lines = markdown.split('\n');
+  let inCodeBlock = false;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
+    if (/^(`{3,}|~{3,})/.test(line.trimStart())) {
+      inCodeBlock = !inCodeBlock;
+      continue;
+    }
+    if (inCodeBlock) { continue; }
     const match = line.match(/^(#{1,6})\s+(.+)$/);
     if (match) {
       const level = match[1].length;

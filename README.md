@@ -99,3 +99,20 @@ Turn your markdown into a slide presentation instantly:
 | `Space` | Next slide |
 | `Home` / `End` | First / Last slide |
 | `ESC` | Exit presentation mode |
+
+
+### Mermaid
+```mermaid
+flowchart LR
+    A[TypeScript] --> B[VS Code Extension API]
+    B --> C[Webview Panel]
+    C --> D[markdown-it]
+    C --> E[highlight.js]
+    C --> F[mermaid.js]
+
+    style A fill:#3178c6,color:#fff
+    style B fill:#007acc,color:#fff
+    style D fill:#4ecdc4,color:#fff
+    style E fill:#45b7d1,color:#fff
+    style F fill:#ff6b6b,color:#fff
+```
