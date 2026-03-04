@@ -429,9 +429,9 @@ function getWebviewContent(markdown: string): string {
     color: var(--vscode-list-activeSelectionForeground, #fff);
   }
 
-  .toc-h1 { font-weight: 700; color: #61AFEF; }
-  .toc-h2 { font-weight: 600; color: #98C379; }
-  .toc-h3 { font-weight: 400; color: #E5C07B; }
+  .toc-h1 { font-weight: 700; color: #ffffffee; }
+  .toc-h2 { font-weight: 600; color: #ffffffcc; }
+  .toc-h3 { font-weight: 400; color: #ffffffaa; }
 
   .toc-empty {
     color: #666;
@@ -451,39 +451,39 @@ function getWebviewContent(markdown: string): string {
   h1 {
     font-size: 2.33em;
     font-weight: 700;
-    color: #61AFEF;
+    color: #ffffffee;
     margin: 32px 0 16px 0;
     padding-bottom: 8px;
-    border-bottom: 2px solid #61AFEF44;
+    border-bottom: 2px solid #ffffff22;
   }
 
   h2 {
     font-size: 1.83em;
     font-weight: 600;
-    color: #98C379;
+    color: #ffffffcc;
     margin: 28px 0 12px 0;
     padding-bottom: 6px;
-    border-bottom: 1px solid #98C37944;
+    border-bottom: 1px solid #ffffff18;
   }
 
   h3 {
     font-size: 1.5em;
     font-weight: 600;
-    color: #E5C07B;
+    color: #ffffffaa;
     margin: 24px 0 10px 0;
   }
 
   h4 {
     font-size: 1.25em;
     font-weight: 600;
-    color: #C678DD;
+    color: #ffffff88;
     margin: 20px 0 8px 0;
   }
 
   h5, h6 {
     font-size: 1.08em;
     font-weight: 600;
-    color: #ABB2BF;
+    color: #ffffff66;
     margin: 16px 0 8px 0;
   }
 
@@ -495,7 +495,7 @@ function getWebviewContent(markdown: string): string {
   }
 
   a {
-    color: #61AFEF;
+    color: #6CB6FF;
     text-decoration: none;
   }
   a:hover {
@@ -538,10 +538,10 @@ function getWebviewContent(markdown: string): string {
 
   /* ── Blockquote ── */
   blockquote {
-    border-left: 4px solid #61AFEF;
+    border-left: 4px solid #6CB6FF;
     margin: 12px 0;
     padding: 8px 16px;
-    background: #61AFEF0a;
+    background: #6CB6FF0a;
     color: #abb2bf;
   }
 
@@ -622,8 +622,8 @@ function getWebviewContent(markdown: string): string {
     padding: 6px 12px;
     border: none;
     border-radius: 6px;
-    background: #61AFEF22;
-    color: #61AFEF;
+    background: #6CB6FF22;
+    color: #6CB6FF;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -632,7 +632,7 @@ function getWebviewContent(markdown: string): string {
   }
 
   .floating-toolbar button:hover {
-    background: #61AFEF44;
+    background: #6CB6FF44;
   }
 
   .floating-toolbar button svg {
@@ -653,15 +653,15 @@ function getWebviewContent(markdown: string): string {
   ::-webkit-scrollbar-thumb:hover { background: #555; }
 
   /* ── Light Mode Overrides ── */
-  body.vscode-light h1 { color: #1a1a1a; border-bottom-color: #1a1a1a22; }
-  body.vscode-light h2 { color: #2c3e50; border-bottom-color: #2c3e5022; }
-  body.vscode-light h3 { color: #3a536b; }
-  body.vscode-light h4 { color: #555; }
-  body.vscode-light h5, body.vscode-light h6 { color: #666; }
+  body.vscode-light h1 { color: #000000ee; border-bottom-color: #00000022; }
+  body.vscode-light h2 { color: #000000cc; border-bottom-color: #00000018; }
+  body.vscode-light h3 { color: #000000aa; }
+  body.vscode-light h4 { color: #00000088; }
+  body.vscode-light h5, body.vscode-light h6 { color: #00000066; }
 
-  body.vscode-light .toc-h1 { color: #1a1a1a; }
-  body.vscode-light .toc-h2 { color: #2c3e50; }
-  body.vscode-light .toc-h3 { color: #3a536b; }
+  body.vscode-light .toc-h1 { color: #000000ee; }
+  body.vscode-light .toc-h2 { color: #000000cc; }
+  body.vscode-light .toc-h3 { color: #000000aa; }
 
   body.vscode-light code {
     background: #f0f2f5;
@@ -791,7 +791,7 @@ function getWebviewContent(markdown: string): string {
   }
 
   .inline-editor {
-    border: 2px solid #61AFEF;
+    border: 2px solid #6CB6FF;
     border-radius: 6px;
     margin: 8px 0;
     overflow: hidden;
@@ -838,7 +838,7 @@ function getWebviewContent(markdown: string): string {
   }
 
   .inline-edit-save {
-    background: #61AFEF;
+    background: #6CB6FF;
     color: #fff;
   }
 
@@ -1337,7 +1337,7 @@ function getWebviewContent(markdown: string): string {
       editTextarea.value = rawMarkdown;
       editMode = true;
       document.body.classList.add('edit-mode');
-      editBtn.style.color = '#61AFEF';
+      editBtn.style.color = '#6CB6FF';
       editTextarea.focus();
       vscode.postMessage({ type: 'editModeChanged', active: true });
     }
@@ -1589,15 +1589,15 @@ function getPdfHtml(markdown: string): string {
     margin: 20mm 15mm;
   }
 
-  h1 { font-size: 2.33em; font-weight: 700; color: #61AFEF; margin: 32px 0 16px 0; padding-bottom: 8px; border-bottom: 2px solid #61AFEF44; }
-  h2 { font-size: 1.83em; font-weight: 600; color: #98C379; margin: 28px 0 12px 0; padding-bottom: 6px; border-bottom: 1px solid #98C37944; page-break-after: avoid; }
-  h3 { font-size: 1.5em; font-weight: 600; color: #E5C07B; margin: 24px 0 10px 0; page-break-after: avoid; }
-  h4 { font-size: 1.25em; font-weight: 600; color: #C678DD; margin: 20px 0 8px 0; }
-  h5, h6 { font-size: 1.08em; font-weight: 600; color: #ABB2BF; margin: 16px 0 8px 0; }
+  h1 { font-size: 2.33em; font-weight: 700; color: #000000ee; margin: 32px 0 16px 0; padding-bottom: 8px; border-bottom: 2px solid #00000022; }
+  h2 { font-size: 1.83em; font-weight: 600; color: #000000cc; margin: 28px 0 12px 0; padding-bottom: 6px; border-bottom: 1px solid #00000018; page-break-after: avoid; }
+  h3 { font-size: 1.5em; font-weight: 600; color: #000000aa; margin: 24px 0 10px 0; page-break-after: avoid; }
+  h4 { font-size: 1.25em; font-weight: 600; color: #00000088; margin: 20px 0 8px 0; }
+  h5, h6 { font-size: 1.08em; font-weight: 600; color: #00000066; margin: 16px 0 8px 0; }
   h1:first-child { margin-top: 0; }
 
   p { margin: 10px 0; }
-  a { color: #61AFEF; text-decoration: none; }
+  a { color: #6CB6FF; text-decoration: none; }
   strong { font-weight: 700; }
   em { font-style: italic; }
 
@@ -1614,7 +1614,7 @@ function getPdfHtml(markdown: string): string {
   pre code.hljs { border-radius: 6px; font-size: 12px; line-height: 1.6; padding: 16px; }
   pre code:not(.hljs) { background: #282c34; border: 1px solid #3e4451; padding: 16px; display: block; }
 
-  blockquote { border-left: 4px solid #61AFEF; margin: 12px 0; padding: 8px 16px; background: #61AFEF0a; color: #abb2bf; }
+  blockquote { border-left: 4px solid #6CB6FF; margin: 12px 0; padding: 8px 16px; background: #6CB6FF0a; color: #abb2bf; }
   ul, ol { margin: 8px 0; padding-left: 24px; }
   li { margin: 4px 0; }
 
