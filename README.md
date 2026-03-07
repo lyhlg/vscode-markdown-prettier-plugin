@@ -1,5 +1,7 @@
 # Markdown Prettier
 
+<a href="https://buymeacoffee.com/lyhlg" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="40"></a>
+
 A beautiful markdown preview extension for VS Code / Cursor with colored headings, TOC sidebar, presentation mode, and Claude Code integration.
 
 ## Features
