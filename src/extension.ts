@@ -790,6 +790,7 @@ function getWebviewContent(markdown: string): string {
       tertiaryTextColor: '#92400e',
       tertiaryBorderColor: '#f59e0b',
       lineColor: '#475569',
+      arrowheadColor: '#475569',
       textColor: '#1e293b',
       mainBkg: '#dbeafe',
       nodeBorder: '#3b82f6',
@@ -811,7 +812,8 @@ function getWebviewContent(markdown: string): string {
       tertiaryColor: '#713f12',
       tertiaryTextColor: '#fef08a',
       tertiaryBorderColor: '#facc15',
-      lineColor: '#94a3b8',
+      lineColor: '#58a6ff',
+      arrowheadColor: '#58a6ff',
       textColor: '#e2e8f0',
       mainBkg: '#1e3a5f',
       nodeBorder: '#60a5fa',
@@ -820,7 +822,7 @@ function getWebviewContent(markdown: string): string {
       titleColor: '#f1f5f9',
       edgeLabelBackground: '#1e293b',
       nodeTextColor: '#e2e8f0',
-      actorLineColor: '#94a3b8',
+      actorLineColor: '#58a6ff',
       actorTextColor: '#e2e8f0',
       actorBkg: '#1e3a5f',
       actorBorder: '#60a5fa',
@@ -1253,15 +1255,23 @@ function getWebviewContent(markdown: string): string {
   .mermaid svg path.flowchart-link,
   .mermaid svg .edgePath path,
   .mermaid svg line[class*="line"],
-  .mermaid svg .er.relationshipLine { stroke: #94a3b8 !important; stroke-width: 2px !important; }
+  .mermaid svg .er.relationshipLine { stroke: #58a6ff !important; stroke-width: 2px !important; }
 
   .mermaid svg marker path,
+  .mermaid svg marker circle,
+  .mermaid svg marker line,
+  .mermaid svg marker polygon,
   .mermaid svg .arrowheadPath,
-  .mermaid svg defs marker path { fill: #94a3b8 !important; stroke: #94a3b8 !important; }
+  .mermaid svg defs marker path,
+  .mermaid svg defs marker circle,
+  .mermaid svg defs marker polygon,
+  .mermaid svg [id*="arrowhead"] path,
+  .mermaid svg [id*="crosshead"] path,
+  .mermaid svg [id*="arrow"] path { fill: #58a6ff !important; stroke: #58a6ff !important; }
 
   /* Catch-all: any line/path that mermaid draws as connectors */
-  .mermaid svg line { stroke: #94a3b8 !important; stroke-width: 1.5px !important; }
-  .mermaid svg [id^="rel"] path { stroke: #94a3b8 !important; stroke-width: 2px !important; }
+  .mermaid svg line { stroke: #58a6ff !important; stroke-width: 1.5px !important; }
+  .mermaid svg [id^="rel"] path { stroke: #58a6ff !important; stroke-width: 2px !important; }
 
   /* Edge labels */
   .mermaid .edgeLabel { background-color: #1e293b !important; color: #cbd5e1 !important; font-size: 12px !important; }
@@ -1273,9 +1283,9 @@ function getWebviewContent(markdown: string): string {
   .mermaid .cardinality { fill: #cbd5e1 !important; font-size: 12px !important; }
 
   /* Sequence diagram */
-  .mermaid .messageLine0, .mermaid .messageLine1 { stroke: #94a3b8 !important; stroke-width: 1.5px !important; }
+  .mermaid .messageLine0, .mermaid .messageLine1 { stroke: #58a6ff !important; stroke-width: 1.5px !important; }
   .mermaid .messageText { fill: #cbd5e1 !important; font-size: 12px !important; }
-  .mermaid .actor-line { stroke: #64748b !important; stroke-width: 1.5px !important; }
+  .mermaid .actor-line { stroke: #58a6ff !important; stroke-width: 1.5px !important; }
   .mermaid .activation0, .mermaid .activation1 { fill: #334155 !important; stroke: #60a5fa !important; }
   .mermaid text.actor-box, .mermaid .actor text,
   .mermaid text[class*="actor"] { fill: #e2e8f0 !important; }
@@ -1316,8 +1326,14 @@ function getWebviewContent(markdown: string): string {
   body.vscode-light .mermaid svg line,
   body.vscode-light .mermaid svg [id^="rel"] path { stroke: #475569 !important; }
   body.vscode-light .mermaid svg marker path,
+  body.vscode-light .mermaid svg marker circle,
+  body.vscode-light .mermaid svg marker polygon,
   body.vscode-light .mermaid svg .arrowheadPath,
-  body.vscode-light .mermaid svg defs marker path { fill: #475569 !important; stroke: #475569 !important; }
+  body.vscode-light .mermaid svg defs marker path,
+  body.vscode-light .mermaid svg defs marker circle,
+  body.vscode-light .mermaid svg defs marker polygon,
+  body.vscode-light .mermaid svg [id*="arrowhead"] path,
+  body.vscode-light .mermaid svg [id*="arrow"] path { fill: #475569 !important; stroke: #475569 !important; }
   body.vscode-light .mermaid .edgeLabel { background-color: #ffffff !important; }
   body.vscode-light .mermaid .edgeLabel rect { fill: #ffffff !important; }
   body.vscode-light .mermaid .edgeLabel span { color: #334155 !important; }
@@ -2203,7 +2219,7 @@ function getWebviewContent(markdown: string): string {
 
     function fixMermaidDiagrams() {
       const isLightMode = document.body.classList.contains('vscode-light');
-      const lineColor = isLightMode ? '#475569' : '#94a3b8';
+      const lineColor = isLightMode ? '#475569' : '#58a6ff';
       const textColor = isLightMode ? '#1e293b' : '#e2e8f0';
       const subTextColor = isLightMode ? '#334155' : '#cbd5e1';
       const wideTypes = ['gantt', 'sequence', 'er', 'journey', 'timeline', 'git'];
@@ -2222,8 +2238,8 @@ function getWebviewContent(markdown: string): string {
           svg.style.maxWidth = '100%';
         }
 
-        // Fix all marker arrowheads
-        svg.querySelectorAll('marker path').forEach(p => {
+        // Fix all marker arrowheads (path, circle, polygon — every child of marker)
+        svg.querySelectorAll('marker path, marker circle, marker polygon, marker line, [id*="arrowhead"] path, [id*="crosshead"] path, [id*="arrow"] path').forEach(p => {
           p.setAttribute('fill', lineColor);
           p.setAttribute('stroke', lineColor);
         });
@@ -2625,7 +2641,8 @@ function getPdfHtml(markdown: string): string {
       tertiaryColor: '#713f12',
       tertiaryTextColor: '#fef08a',
       tertiaryBorderColor: '#facc15',
-      lineColor: '#94a3b8',
+      lineColor: '#58a6ff',
+      arrowheadColor: '#58a6ff',
       textColor: '#e2e8f0',
       mainBkg: '#1e3a5f',
       nodeBorder: '#60a5fa',
@@ -2634,7 +2651,7 @@ function getPdfHtml(markdown: string): string {
       titleColor: '#f1f5f9',
       edgeLabelBackground: '#1e293b',
       nodeTextColor: '#e2e8f0',
-      actorLineColor: '#94a3b8',
+      actorLineColor: '#58a6ff',
       actorTextColor: '#e2e8f0',
       actorBkg: '#1e3a5f',
       actorBorder: '#60a5fa',
@@ -2736,14 +2753,15 @@ function getPdfHtml(markdown: string): string {
   .mermaid svg[aria-roledescription="gantt"],
   .mermaid svg[aria-roledescription="sequence"],
   .mermaid svg[aria-roledescription="er"] { width: 100% !important; }
-  .mermaid .flowchart-link, .mermaid .edgePath .path { stroke: #94a3b8 !important; stroke-width: 2px !important; }
-  .mermaid svg path.relation, .mermaid svg [id^="rel"] path { stroke: #94a3b8 !important; stroke-width: 2px !important; }
-  .mermaid marker path, .mermaid .arrowheadPath { fill: #94a3b8 !important; stroke: #94a3b8 !important; }
+  .mermaid .flowchart-link, .mermaid .edgePath .path { stroke: #58a6ff !important; stroke-width: 2px !important; }
+  .mermaid svg path.relation, .mermaid svg [id^="rel"] path { stroke: #58a6ff !important; stroke-width: 2px !important; }
+  .mermaid marker path, .mermaid marker circle, .mermaid marker polygon, .mermaid .arrowheadPath,
+  .mermaid [id*="arrowhead"] path, .mermaid [id*="arrow"] path { fill: #58a6ff !important; stroke: #58a6ff !important; }
   .mermaid .edgeLabel { background-color: #1e293b !important; }
   .mermaid .edgeLabel rect { fill: #1e293b !important; opacity: 0.85; }
   .mermaid .edgeLabel span { color: #cbd5e1 !important; }
-  .mermaid line { stroke: #94a3b8 !important; }
-  .mermaid .messageLine0, .mermaid .messageLine1 { stroke: #94a3b8 !important; stroke-width: 1.5px !important; }
+  .mermaid line { stroke: #58a6ff !important; }
+  .mermaid .messageLine0, .mermaid .messageLine1 { stroke: #58a6ff !important; stroke-width: 1.5px !important; }
   .mermaid .messageText { fill: #cbd5e1 !important; }
   .mermaid text.actor-box, .mermaid .actor text, .mermaid text[class*="actor"] { fill: #e2e8f0 !important; }
   .mermaid .actor { fill: #1e3a5f !important; stroke: #60a5fa !important; }
