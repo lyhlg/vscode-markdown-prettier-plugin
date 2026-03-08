@@ -445,6 +445,8 @@ function getWebviewContent(markdown: string): string {
     overflow-y: auto;
     padding: 32px 48px;
     max-width: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 24px;
   }
 
   /* ── Headings ── */
