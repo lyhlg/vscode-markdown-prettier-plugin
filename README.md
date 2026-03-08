@@ -79,6 +79,8 @@ Turn your markdown into a slide presentation instantly:
 
 **A+** / **A−** buttons in the top-right corner. All content scales proportionally (10px–20px range). Preference persists across sessions.
 
+<video src="https://raw.githubusercontent.com/lyhlg/vscode-markdown-prettier-plugin/main/assets/videos/font.mov" controls muted loop width="100%"></video>
+
 ### PDF Export
 
 One-click PDF export using headless Chrome/Chromium/Edge/Brave. Full styling, Mermaid diagrams, callouts, and smart page break handling are all preserved.
@@ -94,6 +96,8 @@ One-click PDF export using headless Chrome/Chromium/Edge/Brave. Full styling, Me
 ### Live Preview
 
 Preview updates in real-time as you edit. Automatically switches when you open a different markdown file.
+
+<video src="https://raw.githubusercontent.com/lyhlg/vscode-markdown-prettier-plugin/main/assets/videos/preview.mov" controls muted loop width="100%"></video>
 
 ---
 
