@@ -99,15 +99,35 @@ export function activate(context: vscode.ExtensionContext) {
       { enableScripts: true, retainContextWhenHidden: true }
     );
 
-    const updateWebview = () => {
+    const sendContentUpdate = () => {
       const text = editor.document.getText();
-      panel.webview.html = getWebviewContent(text);
+      const { text: stripped, offset: fmOffset } = stripFrontmatter(text);
+      const { processed, blocks } = preprocessMermaid(stripped);
+      const headings = extractHeadings(stripped);
+      let renderedHtml = md.render(processed, { fmOffset });
+      renderedHtml = addHeadingIds(renderedHtml, headings);
+      renderedHtml = processCallouts(renderedHtml);
+      blocks.forEach((content, idx) => {
+        renderedHtml = renderedHtml.replace(
+          new RegExp(`<p[^>]*>MERMAID_PLACEHOLDER_${idx}</p>`),
+          `<div class="mermaid">${escapeHtml(content)}</div>`
+        );
+      });
+      const tocHtml = generateTocHtml(headings);
+      const headingData = headings.map(h => ({ id: h.id, line: h.line }));
+      panel.webview.postMessage({
+        type: 'updateContent',
+        renderedHtml,
+        tocHtml,
+        headingData,
+        rawMarkdown: text
+      });
     };
 
     let isEditMode = false;
     let pendingSyncLine: number | null = null;
 
-    updateWebview();
+    panel.webview.html = getWebviewContent(editor.document.getText());
 
     // Receive messages from Webview
     panel.webview.onDidReceiveMessage(async (message) => {
@@ -126,6 +146,7 @@ export function activate(context: vscode.ExtensionContext) {
         await vscode.workspace.applyEdit(wsEdit);
         await doc.save();
         isEditMode = false;
+        sendContentUpdate();
       } else if (message.type === 'inlineEditSave') {
         const doc = editor.document;
         const startLine = message.lineStart;
@@ -144,6 +165,7 @@ export function activate(context: vscode.ExtensionContext) {
         inlineEdit.replace(doc.uri, range, newText);
         await vscode.workspace.applyEdit(inlineEdit);
         await doc.save();
+        sendContentUpdate();
       } else if (message.type === 'exportPdf') {
         const doc = editor.document;
         const mdPath = doc.uri.fsPath;
@@ -190,7 +212,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     const changeDisposable = vscode.workspace.onDidChangeTextDocument(e => {
       if (e.document === editor.document && !isEditMode) {
-        updateWebview();
+        sendContentUpdate();
       }
     });
 
@@ -1940,17 +1962,17 @@ function getWebviewContent(markdown: string): string {
 
     // ── TOC search ──
     const tocSearch = document.getElementById('tocSearch');
-    const tocItemsArr = Array.from(document.querySelectorAll('.toc-item'));
+    let tocItemsArr = Array.from(document.querySelectorAll('.toc-item'));
 
     // Pre-compute: read data attributes once
-    const tocData = tocItemsArr.map(item => ({
+    let tocData = tocItemsArr.map(item => ({
       level: parseInt(item.getAttribute('data-level') || '99'),
       text: item.getAttribute('data-text') || '',
       origHtml: item.innerHTML
     }));
 
     // Pre-compute parent index for each item
-    const tocParentIdx = tocData.map((_, i) => {
+    let tocParentIdx = tocData.map((_, i) => {
       for (let j = i - 1; j >= 0; j--) {
         if (tocData[j].level < tocData[i].level) return j;
       }
@@ -2075,7 +2097,7 @@ function getWebviewContent(markdown: string): string {
     }
 
     // ── Scroll sync ──
-    const headingData = JSON.parse(document.getElementById('heading-data').textContent);
+    let headingData = JSON.parse(document.getElementById('heading-data').textContent);
     let presentationActive = false;
     let scrollSource = null; // 'editor' or 'preview' — prevents infinite loop
     let scrollSourceTimer = null;
@@ -2106,6 +2128,112 @@ function getWebviewContent(markdown: string): string {
             target.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
         }
+      } else if (message.type === 'updateContent') {
+        const contentEl = document.querySelector('.content');
+        const savedScrollTop = contentEl.scrollTop;
+
+        // Exit presentation mode if active
+        if (presentationActive) exitPresentation();
+
+        // Reset inline editing state
+        inlineEditing = false;
+
+        // Update content HTML
+        contentEl.innerHTML = message.renderedHtml;
+
+        // Update TOC items
+        document.querySelector('.toc-items').innerHTML = message.tocHtml;
+
+        // Update data elements
+        document.getElementById('heading-data').textContent = JSON.stringify(message.headingData);
+        document.getElementById('raw-markdown').textContent = JSON.stringify(message.rawMarkdown);
+
+        // Update JS references
+        headingData = message.headingData;
+        headingEls = contentEl.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]');
+
+        // Re-run syntax highlighting
+        contentEl.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
+
+        // Re-add code copy buttons
+        contentEl.querySelectorAll('pre').forEach(pre => {
+          const code = pre.querySelector('code');
+          if (!code) return;
+          const btn = document.createElement('button');
+          btn.className = 'code-copy-btn';
+          btn.textContent = 'Copy';
+          btn.addEventListener('click', () => {
+            navigator.clipboard.writeText(code.textContent || '').then(() => {
+              btn.textContent = 'Copied!';
+              btn.classList.add('copied');
+              setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+            });
+          });
+          pre.appendChild(btn);
+        });
+
+        // Rebuild slides for presentation mode (must happen before mermaid init)
+        totalSlides = buildSlides();
+        allSlides = document.querySelectorAll('.slide');
+        if (totalSlides <= 1) presentBtn.style.opacity = '0.3';
+        else presentBtn.style.opacity = '';
+
+        // Re-initialize mermaid diagrams (after slides are built so DOM is stable)
+        const mermaidDivs = contentEl.querySelectorAll('.mermaid');
+        if (mermaidDivs.length > 0) {
+          const nodes = Array.from(mermaidDivs);
+          // Remove any stale processed state so mermaid re-renders them
+          nodes.forEach(el => el.removeAttribute('data-processed'));
+          if (typeof mermaid.run === 'function') {
+            mermaid.run({ nodes }).catch(() => {});
+          } else {
+            try { mermaid.init(undefined, nodes); } catch(e) {}
+          }
+          setTimeout(fixMermaidDiagrams, 500);
+          setTimeout(fixMermaidDiagrams, 1500);
+        }
+
+        // Re-build TOC data for search
+        tocItemsArr = Array.from(document.querySelectorAll('.toc-item'));
+        tocData = tocItemsArr.map(item => ({
+          level: parseInt(item.getAttribute('data-level') || '99'),
+          text: item.getAttribute('data-text') || '',
+          origHtml: item.innerHTML
+        }));
+        tocParentIdx = tocData.map((_, i) => {
+          for (let j = i - 1; j >= 0; j--) {
+            if (tocData[j].level < tocData[i].level) return j;
+          }
+          return -1;
+        });
+
+        // Re-attach TOC click handlers
+        tocItemsArr.forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const id = link.getAttribute('href').substring(1);
+            const tgt = document.getElementById(id);
+            if (tgt) {
+              setScrollSource('preview');
+              tgt.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            setActiveTocItem(id);
+            const heading = headingData.find(h => h.id === id);
+            if (heading) {
+              vscode.postMessage({ type: 'scrollToLine', line: heading.line });
+            }
+          });
+        });
+
+        // Re-apply TOC search if active
+        if (tocSearch.value.trim()) {
+          tocSearch.dispatchEvent(new Event('input'));
+        }
+
+        // Restore scroll position (disable smooth scroll temporarily)
+        contentEl.style.scrollBehavior = 'auto';
+        contentEl.scrollTop = savedScrollTop;
+        requestAnimationFrame(() => { contentEl.style.scrollBehavior = ''; });
       }
     });
 
@@ -2130,7 +2258,7 @@ function getWebviewContent(markdown: string): string {
 
     // ── Scroll-based active section ──
     const content = document.querySelector('.content');
-    const headingEls = document.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]');
+    let headingEls = document.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]');
 
     let previewScrollTimeout = null;
     content.addEventListener('scroll', () => {
@@ -2488,9 +2616,9 @@ function getWebviewContent(markdown: string): string {
       return groups.length;
     }
 
-    const totalSlides = buildSlides();
+    let totalSlides = buildSlides();
     let currentSlide = 0;
-    const allSlides = document.querySelectorAll('.slide');
+    let allSlides = document.querySelectorAll('.slide');
     const slideCounter = document.getElementById('slideCounter');
     const presentBtn = document.getElementById('presentBtn');
 
@@ -2509,7 +2637,14 @@ function getWebviewContent(markdown: string): string {
       currentSlide = 0;
       document.body.classList.add('presentation-mode');
       updateSlideClasses();
-      try { mermaid.init(undefined, '.slide-active .mermaid'); } catch(e) {}
+      try {
+        const nodes = Array.from(document.querySelectorAll('.slide-active .mermaid'));
+        if (nodes.length > 0) {
+          nodes.forEach(el => el.removeAttribute('data-processed'));
+          if (typeof mermaid.run === 'function') mermaid.run({ nodes }).catch(() => {});
+          else mermaid.init(undefined, nodes);
+        }
+      } catch(e) {}
     }
 
     function exitPresentation() {
@@ -2522,7 +2657,14 @@ function getWebviewContent(markdown: string): string {
       if (index < 0 || index >= totalSlides) return;
       currentSlide = index;
       updateSlideClasses();
-      try { mermaid.init(undefined, '.slide-active .mermaid'); } catch(e) {}
+      try {
+        const nodes = Array.from(document.querySelectorAll('.slide-active .mermaid'));
+        if (nodes.length > 0) {
+          nodes.forEach(el => el.removeAttribute('data-processed'));
+          if (typeof mermaid.run === 'function') mermaid.run({ nodes }).catch(() => {});
+          else mermaid.init(undefined, nodes);
+        }
+      } catch(e) {}
     }
 
     presentBtn.addEventListener('click', () => {
