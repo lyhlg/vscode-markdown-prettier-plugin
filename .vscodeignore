@@ -3,3 +3,17 @@
 src/**
 .gitignore
 tsconfig.json
+vitest.config.ts
+assets/**
+*.mov
+.DS_Store
+node_modules/**
+.context/**
+docs/**
+test.md
+screenshots/**
+firebase-debug.log
+*.vsix
+.git/**
+.playwright-mcp/**
+**/*.test.ts

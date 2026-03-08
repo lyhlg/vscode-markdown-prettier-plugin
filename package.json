@@ -48,6 +48,8 @@
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
+        "test": "vitest run",
+        "test:watch": "vitest",
         "package": "vsce package --allow-missing-repository",
         "update-and-publish": "npm version patch --no-git-tag-version && npm run compile && npm run package && VERSION=$(node -p \"require('./package.json').version\") && git add -A && git commit -m \"release: v$VERSION\" && git push origin main && gh release create v$VERSION markdown-prettier-$VERSION.vsix --title \"v$VERSION\" --generate-notes && open https://marketplace.visualstudio.com/manage/publishers/lyhlg"
     },
@@ -55,7 +57,8 @@
         "@types/markdown-it": "^14.1.1",
         "@types/node": "^25.3.0",
         "@types/vscode": "^1.85.0",
-        "typescript": "^5.3.0"
+        "typescript": "^5.3.0",
+        "vitest": "^4.0.18"
     },
     "dependencies": {
         "markdown-it": "^14.1.0",
