@@ -269,6 +269,8 @@ export function getScripts(): string {
           }
           setTimeout(fixMermaidDiagrams, 500);
           setTimeout(fixMermaidDiagrams, 1500);
+          setTimeout(setupMermaidZoom, 600);
+          setTimeout(setupMermaidZoom, 1600);
         }
 
         // Re-build TOC data for search
@@ -505,6 +507,86 @@ export function getScripts(): string {
     setTimeout(fixMermaidDiagrams, 500);
     setTimeout(fixMermaidDiagrams, 1500);
     setTimeout(fixMermaidDiagrams, 3000);
+
+    // ══════════════════════════════════════════
+    // ── MERMAID ZOOM / PAN ──
+    // ══════════════════════════════════════════
+    function setupMermaidZoom() {
+      document.querySelectorAll('.mermaid').forEach(el => {
+        if (el.dataset.zoomSetup) return;
+        el.dataset.zoomSetup = 'true';
+
+        const controls = document.createElement('div');
+        controls.className = 'mermaid-zoom-controls';
+        controls.innerHTML =
+          '<button class="mermaid-zoom-btn" data-action="in" title="확대">+</button>' +
+          '<button class="mermaid-zoom-btn" data-action="out" title="축소">−</button>' +
+          '<button class="mermaid-zoom-btn" data-action="reset" title="초기화">↺</button>';
+        el.appendChild(controls);
+
+        let scale = 1, tx = 0, ty = 0;
+        let panning = false, sx = 0, sy = 0;
+
+        function apply() {
+          const svg = el.querySelector('svg');
+          if (!svg) return;
+          svg.style.transform = 'scale(' + scale + ') translate(' + tx + 'px,' + ty + 'px)';
+          svg.style.transformOrigin = 'center center';
+          const zoomed = scale > 1;
+          el.classList.toggle('zoomed', zoomed);
+          svg.style.pointerEvents = zoomed ? 'none' : '';
+        }
+
+        controls.addEventListener('click', function(e) {
+          const btn = e.target.closest('.mermaid-zoom-btn');
+          if (!btn) return;
+          e.stopPropagation();
+          e.preventDefault();
+          const action = btn.dataset.action;
+          if (action === 'in') {
+            scale = Math.min(scale + 0.25, 4);
+          } else if (action === 'out') {
+            scale = Math.max(scale - 0.25, 0.5);
+            if (scale <= 1) { tx = 0; ty = 0; }
+          } else if (action === 'reset') {
+            scale = 1; tx = 0; ty = 0;
+          }
+          apply();
+        });
+
+        el.addEventListener('mousedown', function(e) {
+          if (scale <= 1) return;
+          if (e.target.closest('.mermaid-zoom-controls')) return;
+          panning = true;
+          sx = e.clientX; sy = e.clientY;
+          el.classList.add('panning');
+          e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', function(e) {
+          if (!panning) return;
+          tx += (e.clientX - sx) / scale;
+          ty += (e.clientY - sy) / scale;
+          sx = e.clientX; sy = e.clientY;
+          apply();
+        });
+
+        document.addEventListener('mouseup', function() {
+          if (panning) { panning = false; el.classList.remove('panning'); }
+        });
+
+        el.addEventListener('wheel', function(e) {
+          if (!e.ctrlKey && !e.metaKey) return;
+          e.preventDefault();
+          const delta = e.deltaY > 0 ? -0.15 : 0.15;
+          scale = Math.min(Math.max(scale + delta, 0.5), 4);
+          if (scale <= 1) { tx = 0; ty = 0; }
+          apply();
+        }, { passive: false });
+      });
+    }
+    setTimeout(setupMermaidZoom, 600);
+    setTimeout(setupMermaidZoom, 1600);
 
     // ══════════════════════════════════════════
     // ── INLINE EDIT (double-click) ──

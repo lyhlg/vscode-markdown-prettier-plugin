@@ -360,21 +360,21 @@ export function getStyles(): string {
 
   /* ── Callout (GitHub-style Admonitions) ── */
   .callout {
-    margin: 16px 0;
-    padding: 12px 16px;
-    border-left: 4px solid;
-    border-radius: 6px;
+    margin: 12px 0;
+    padding: 10px 14px;
+    border-left: 3px solid;
+    border-radius: 4px;
   }
   .callout-title {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     font-weight: 600;
-    font-size: 14px;
-    margin-bottom: 6px;
+    font-size: 13px;
+    margin-bottom: 4px;
   }
-  .callout-title svg { flex-shrink: 0; }
-  .callout-content p { margin: 4px 0; }
+  .callout-title svg { flex-shrink: 0; width: 14px; height: 14px; }
+  .callout-content p { margin: 3px 0; font-size: 14px; }
 
   .callout-note    { border-left-color: #2f81f7; background: rgba(47,129,247,0.08); }
   .callout-note .callout-title { color: #2f81f7; }
@@ -396,6 +396,8 @@ export function getStyles(): string {
 
   /* ── Mermaid Diagram Overrides ── */
   .mermaid {
+    position: relative;
+    overflow: hidden;
     margin: 20px 0;
     padding: 16px;
     background: rgba(255,255,255,0.03);
@@ -403,7 +405,47 @@ export function getStyles(): string {
     border: 1px solid rgba(255,255,255,0.08);
     text-align: center;
   }
-  .mermaid svg { max-width: 100% !important; height: auto !important; }
+  .mermaid svg { max-width: 100% !important; height: auto !important; transition: transform 0.15s ease; }
+
+  /* Mermaid zoom controls */
+  .mermaid-zoom-controls {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 4px;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .mermaid:hover .mermaid-zoom-controls { opacity: 1; }
+  .mermaid-zoom-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(30,41,59,0.85);
+    color: #e2e8f0;
+    cursor: pointer;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    padding: 0;
+    backdrop-filter: blur(4px);
+  }
+  .mermaid-zoom-btn:hover { background: rgba(30,41,59,1); }
+  .mermaid.zoomed { cursor: grab; user-select: none; }
+  .mermaid.zoomed.panning { cursor: grabbing; }
+  .mermaid.zoomed .mermaid-zoom-controls { opacity: 1; }
+
+  body.vscode-light .mermaid-zoom-btn {
+    border-color: rgba(0,0,0,0.15);
+    background: rgba(255,255,255,0.85);
+    color: #1e293b;
+  }
+  body.vscode-light .mermaid-zoom-btn:hover { background: rgba(255,255,255,1); }
 
   /* Universal: all SVG lines, paths, markers in mermaid */
   .mermaid svg path[class*="transition"],
@@ -511,23 +553,25 @@ export function getStyles(): string {
   /* ── Table ── */
   table {
     border-collapse: collapse;
-    width: 100%;
+    width: auto;
     margin: 12px 0;
   }
 
   th, td {
-    border: 1px solid #3e4451;
-    padding: 8px 12px;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 6px 16px 6px 0;
     text-align: left;
+    vertical-align: top;
   }
 
   th {
-    background: #2c313a;
     font-weight: 600;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
   }
 
-  tr:nth-child(even) {
-    background: #2c313a44;
+  tr:last-child td {
+    border-bottom: none;
   }
 
   /* ── Horizontal Rule ── */
@@ -543,6 +587,28 @@ export function getStyles(): string {
     max-width: 100%;
     border-radius: 6px;
     margin: 8px 0;
+  }
+
+  /* ── Keyboard Keys ── */
+  kbd {
+    display: inline-block;
+    padding: 2px 7px;
+    font-family: inherit;
+    font-size: 0.85em;
+    line-height: 1.4;
+    color: #e2e8f0;
+    background: #2a2d35;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+    vertical-align: baseline;
+  }
+  body.vscode-light kbd {
+    color: #24292f;
+    background: #f6f8fa;
+    border-color: rgba(0,0,0,0.15);
+    box-shadow: 0 1px 1px rgba(0,0,0,0.08);
   }
 
   /* ── Checkbox ── */
@@ -637,17 +703,13 @@ export function getStyles(): string {
   }
 
   body.vscode-light th, body.vscode-light td {
-    border-color: #d0d7de;
+    border-bottom-color: rgba(0,0,0,0.08);
     color: #24292f;
   }
 
   body.vscode-light th {
-    background: #f0f2f5;
+    border-bottom-color: rgba(0,0,0,0.2);
     color: #1a1a1a;
-  }
-
-  body.vscode-light tr:nth-child(even) {
-    background: #f6f8fa;
   }
 
   body.vscode-light blockquote {
