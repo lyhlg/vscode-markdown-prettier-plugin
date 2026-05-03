@@ -33,7 +33,7 @@ export function renderMarkdown(markdown: string): RenderResult & { mermaidBlocks
   blocks.forEach((content, idx) => {
     renderedHtml = renderedHtml.replace(
       new RegExp(`<p[^>]*>MERMAID_PLACEHOLDER_${idx}</p>`),
-      `<div class="mermaid">${escapeHtml(content)}</div>`
+      `<pre class="mermaid">${content}</pre>`
     );
   });
   const tocHtml = generateTocHtml(headings);
