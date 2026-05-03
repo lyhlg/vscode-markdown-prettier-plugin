@@ -5,7 +5,6 @@ import { renderMarkdown } from './markdown';
 import { getWebviewContent } from './webview';
 import { loadPreviewImages, registerCompletionProvider } from './commands';
 import { exportToPdf } from './pdf';
-import { sendToClaudeTerminal, onTerminalClosed } from './claude/terminal';
 
 export function activate(context: vscode.ExtensionContext) {
   const disposable = vscode.commands.registerCommand('markdownViewer.open', () => {
@@ -41,11 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Receive messages from Webview
     panel.webview.onDidReceiveMessage(async (message) => {
-      if (message.type === 'askClaude') {
-        const selectedText = message.text;
-        const prompt = `Please improve the following markdown:\n\n${selectedText}`;
-        sendToClaudeTerminal(prompt);
-      } else if (message.type === 'editSave') {
+      if (message.type === 'editSave') {
         const doc = editor.document;
         const fullRange = new vscode.Range(
           doc.positionAt(0),
@@ -157,9 +152,6 @@ export function activate(context: vscode.ExtensionContext) {
       scrollDisposable.dispose();
     });
   });
-
-  // Release reference when terminal is closed
-  vscode.window.onDidCloseTerminal(t => onTerminalClosed(t));
 
   // ── Slash command autocomplete ──
   const previewImages = loadPreviewImages(context.extensionPath);

@@ -128,45 +128,6 @@ export function getScripts(): string {
       vscode.setState({ fontSize });
     });
 
-    // ── Floating toolbar ──
-    const toolbar = document.getElementById('toolbar');
-    const askClaudeBtn = document.getElementById('askClaudeBtn');
-
-    document.addEventListener('mouseup', (e) => {
-      const selection = window.getSelection();
-      const selectedText = selection?.toString().trim();
-
-      if (selectedText && selectedText.length > 0) {
-        const range = selection.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
-
-        toolbar.classList.add('visible');
-        toolbar.style.left = rect.left + (rect.width / 2) - (toolbar.offsetWidth / 2) + 'px';
-        toolbar.style.top = (rect.top - toolbar.offsetHeight - 8) + 'px';
-
-        const toolbarRect = toolbar.getBoundingClientRect();
-        if (toolbarRect.left < 8) toolbar.style.left = '8px';
-        if (toolbarRect.top < 8) toolbar.style.top = (rect.bottom + 8) + 'px';
-      } else {
-        toolbar.classList.remove('visible');
-      }
-    });
-
-    document.addEventListener('mousedown', (e) => {
-      if (!toolbar.contains(e.target)) {
-        toolbar.classList.remove('visible');
-      }
-    });
-
-    askClaudeBtn.addEventListener('click', () => {
-      const selection = window.getSelection();
-      const selectedText = selection?.toString().trim();
-      if (selectedText) {
-        vscode.postMessage({ type: 'askClaude', text: selectedText });
-        toolbar.classList.remove('visible');
-      }
-    });
-
     // ── Active tracking ──
     function setActiveTocItem(id) {
       document.querySelectorAll('.toc-item').forEach(l => l.classList.remove('active'));
@@ -494,10 +455,14 @@ export function getScripts(): string {
           t.setAttribute('fill', subTextColor);
         });
 
-        // Universal: fix any remaining dark text on dark bg
+        // Universal: fix invisible text (dark-on-dark or light-on-light)
         svg.querySelectorAll('text').forEach(t => {
           const fill = t.getAttribute('fill');
-          if (!isLightMode && fill && (fill === '#000' || fill === '#000000' || fill === 'black' || fill === 'rgb(0, 0, 0)')) {
+          if (!fill) return;
+          if (!isLightMode && (fill === '#000' || fill === '#000000' || fill === 'black' || fill === 'rgb(0, 0, 0)')) {
+            t.setAttribute('fill', textColor);
+          }
+          if (isLightMode && (fill === '#fff' || fill === '#ffffff' || fill === 'white' || fill === 'rgb(255, 255, 255)' || fill === '#ccc' || fill === '#d4d4d4' || fill === '#e2e8f0' || fill === '#f1f5f9')) {
             t.setAttribute('fill', textColor);
           }
         });

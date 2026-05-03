@@ -540,6 +540,43 @@ export function getStyles(): string {
   body.vscode-light .mermaid .messageText { fill: #334155 !important; }
   body.vscode-light .mermaid .cardinality { fill: #334155 !important; }
 
+  /* Light mode: Gantt chart */
+  body.vscode-light .mermaid .titleText { fill: #0f172a !important; }
+  body.vscode-light .mermaid .sectionTitle,
+  body.vscode-light .mermaid .sectionTitle0,
+  body.vscode-light .mermaid .sectionTitle1,
+  body.vscode-light .mermaid .sectionTitle2,
+  body.vscode-light .mermaid .sectionTitle3 { fill: #1e293b !important; }
+  body.vscode-light .mermaid .taskText { fill: #ffffff !important; }
+  body.vscode-light .mermaid .taskTextOutsideRight,
+  body.vscode-light .mermaid .taskTextOutsideLeft { fill: #1e293b !important; }
+  body.vscode-light .mermaid .grid .tick text { fill: #475569 !important; }
+  body.vscode-light .mermaid .grid .tick line { stroke: #cbd5e1 !important; }
+  body.vscode-light .mermaid .today { stroke: #dc2626 !important; }
+
+  /* Light mode: Sequence diagram */
+  body.vscode-light .mermaid text.actor-box,
+  body.vscode-light .mermaid .actor text,
+  body.vscode-light .mermaid text[class*="actor"] { fill: #1e293b !important; }
+  body.vscode-light .mermaid .actor { fill: #dbeafe !important; stroke: #3b82f6 !important; }
+  body.vscode-light .mermaid .actor-line { stroke: #64748b !important; }
+  body.vscode-light .mermaid .activation0,
+  body.vscode-light .mermaid .activation1 { fill: #e0e7ff !important; stroke: #3b82f6 !important; }
+
+  /* Light mode: ER diagram */
+  body.vscode-light .mermaid .er.attributeBoxOdd,
+  body.vscode-light .mermaid .er.attributeBoxEven { fill: #f8fafc !important; stroke: #cbd5e1 !important; }
+  body.vscode-light .mermaid .er.entityBox { fill: #dbeafe !important; stroke: #3b82f6 !important; }
+  body.vscode-light .mermaid .er.entityLabel { fill: #1e293b !important; }
+
+  /* Light mode: State diagram */
+  body.vscode-light .mermaid .statediagram-state rect.basic { stroke: #3b82f6 !important; }
+
+  /* Light mode: Node and label text */
+  body.vscode-light .mermaid .nodeLabel { color: #1e293b !important; }
+  body.vscode-light .mermaid .label { color: #1e293b !important; }
+  body.vscode-light .mermaid .commit-label { fill: #475569 !important; }
+
   /* ── Lists ── */
   ul, ol {
     margin: 8px 0;
@@ -616,55 +653,6 @@ export function getStyles(): string {
     margin-right: 6px;
   }
 
-  /* ── Floating Toolbar ── */
-  .floating-toolbar {
-    display: none;
-    position: fixed;
-    background: #21252b;
-    border: 1px solid #3e4451;
-    border-radius: 8px;
-    padding: 4px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-    z-index: 9999;
-    animation: fadeIn 0.15s ease;
-  }
-
-  .floating-toolbar.visible {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .floating-toolbar button {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    border: none;
-    border-radius: 6px;
-    background: #6CB6FF22;
-    color: #6CB6FF;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.15s;
-  }
-
-  .floating-toolbar button:hover {
-    background: #6CB6FF44;
-  }
-
-  .floating-toolbar button svg {
-    width: 14px;
-    height: 14px;
-    fill: currentColor;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
 
   /* ── Scrollbar ── */
   ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -740,9 +728,6 @@ export function getStyles(): string {
   body.vscode-light .toc-toggle { color: #888; }
   body.vscode-light .toc-toggle:hover { color: #333; background: #e8e8e8; }
 
-  body.vscode-light .floating-toolbar { background: #fff; border-color: #d0d7de; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
-  body.vscode-light .floating-toolbar button { background: #0969da22; color: #0969da; }
-  body.vscode-light .floating-toolbar button:hover { background: #0969da44; }
 
   body.vscode-light ::-webkit-scrollbar-thumb { background: #ccc; }
   body.vscode-light ::-webkit-scrollbar-thumb:hover { background: #aaa; }
