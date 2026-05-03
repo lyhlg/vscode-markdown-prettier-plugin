@@ -397,7 +397,7 @@ export function getStyles(): string {
   /* ── Mermaid Diagram Overrides ── */
   .mermaid {
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     margin: 20px 0;
     padding: 16px;
     background: rgba(255,255,255,0.03);
@@ -436,7 +436,7 @@ export function getStyles(): string {
     backdrop-filter: blur(4px);
   }
   .mermaid-zoom-btn:hover { background: rgba(30,41,59,1); }
-  .mermaid.zoomed { cursor: grab; user-select: none; }
+  .mermaid.zoomed { cursor: grab; user-select: none; overflow: hidden; }
   .mermaid.zoomed.panning { cursor: grabbing; }
   .mermaid.zoomed .mermaid-zoom-controls { opacity: 1; }
 
