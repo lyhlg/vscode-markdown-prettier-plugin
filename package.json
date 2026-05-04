@@ -4,7 +4,7 @@
     "description": "A beautiful markdown viewer with colored headings and TOC sidebar",
     "publisher": "lyhlg",
     "icon": "icon.png",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "engines": {
         "vscode": "^1.85.0"
     },
