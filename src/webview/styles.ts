@@ -395,7 +395,7 @@ export function getStyles(): string {
   .callout-danger .callout-title { color: #f85149; }
 
   /* ── Mermaid Diagram Overrides ── */
-  pre.mermaid, div.mermaid {
+  .mermaid {
     position: relative;
     overflow: visible;
     margin: 20px 0;
@@ -404,8 +404,6 @@ export function getStyles(): string {
     border-radius: 8px;
     border: 1px solid rgba(255,255,255,0.08);
     text-align: center;
-    font-family: inherit;
-    white-space: normal;
   }
   .mermaid svg { max-width: 100% !important; height: auto !important; transition: transform 0.15s ease; }
 

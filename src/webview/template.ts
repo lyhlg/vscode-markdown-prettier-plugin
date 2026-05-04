@@ -6,7 +6,7 @@ export function getMermaidInitScript(): string {
   return `
   const isLight = document.body.classList.contains('vscode-light');
   mermaid.initialize({
-    startOnLoad: true,
+    startOnLoad: false,
     theme: 'base',
     themeVariables: isLight ? {
       primaryColor: '#dbeafe',
@@ -104,10 +104,10 @@ export function getWebviewContent(markdown: string): string {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"><\/script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dockerfile.min.js"><\/script>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"><\/script>
-<script>${mermaidInit}<\/script>
 <style>${styles}</style>
 </head>
 <body>
+<script>${mermaidInit}<\/script>
   <div class="font-controls">
     <button class="font-btn" id="fontMinus">A−</button>
     <span class="font-size-label" id="fontSizeLabel">12px</span>

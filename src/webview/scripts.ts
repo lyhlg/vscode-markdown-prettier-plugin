@@ -468,6 +468,18 @@ export function getScripts(): string {
         });
       });
     }
+    // Manually run mermaid (startOnLoad is false)
+    (function initMermaid() {
+      const mermaidNodes = document.querySelectorAll('.mermaid');
+      if (mermaidNodes.length > 0) {
+        const nodes = Array.from(mermaidNodes);
+        if (typeof mermaid.run === 'function') {
+          mermaid.run({ nodes }).catch(() => {});
+        } else {
+          try { mermaid.init(undefined, nodes); } catch(e) {}
+        }
+      }
+    })();
     // Run after mermaid renders (slight delay needed)
     setTimeout(fixMermaidDiagrams, 500);
     setTimeout(fixMermaidDiagrams, 1500);
